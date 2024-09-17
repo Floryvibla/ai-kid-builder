@@ -58,6 +58,6 @@ const config: Config = {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@pyncz/tailwind-mask-image")],
 };
 export default config;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Joti_One } from "next/font/google"
 import "./globals.css";
+import 'swiper/css';
 import Header from "@/components/header";
 
 const geistSans = localFont({
@@ -31,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-br">
       <body
         className={`${joti_One.variable} antialiased`}
       >

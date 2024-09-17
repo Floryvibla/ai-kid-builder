@@ -11,10 +11,16 @@ import { Label } from "./ui/label"
 import { Textarea } from "./ui/textarea"
 import { Button } from "./ui/button"
 
-export function ModalView() {
+interface Props {
+  children?: React.ReactNode
+}
+
+export function ModalView({children}:Props) {
   return (
     <Dialog>
-      <DialogTrigger>Open</DialogTrigger>
+      <DialogTrigger asChild>
+        {children ?? 'Abrir'}
+      </DialogTrigger>
       <DialogContent className="backdrop-blur-lg bg-black/40 border-gray-300/30 text-white">
         <DialogHeader>
           <DialogTitle className="mb-4 text-primary text-left">Qual é a sua ideia para a história?</DialogTitle>

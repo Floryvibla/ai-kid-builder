@@ -28,7 +28,7 @@ const films = [
 interface PropsCard {
   items: any[]
   childrenNavigation?: React.ReactNode
-  // isActive: boolean
+  carouselItemChildren?: React.ReactNode
 }
 
 export function CardStory({item, isActive}:{item:any, isActive: boolean}) {
@@ -47,7 +47,7 @@ export function CardStory({item, isActive}:{item:any, isActive: boolean}) {
   )
 }
 
-export function CarouselBox({ items, childrenNavigation }: PropsCard) {
+export function CarouselBox({ items, childrenNavigation, carouselItemChildren }: PropsCard) {
 
   const [cardIndex, setCardIndex] = React.useState(0)
   const [api, setApi] = React.useState<CarouselApi>()
@@ -92,7 +92,7 @@ export function CarouselBox({ items, childrenNavigation }: PropsCard) {
       </div>
       <div className={clsx("w-full", {'mask-linear mask-dir-to-r  mask-point-from-[80%]': (count-1) !== cardIndex})}>
         <CarouselContent className="">
-          {items.map((item, index) => (
+          {carouselItemChildren ?? items.map((item, index) => (
             <CarouselItem 
               key={index} 
               onClick={() => handleOnclickCard(index)}

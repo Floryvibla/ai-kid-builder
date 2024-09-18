@@ -27,6 +27,7 @@ const films = [
 
 interface PropsCard {
   items: any[]
+  childrenNavigation?: React.ReactNode
   // isActive: boolean
 }
 
@@ -46,7 +47,7 @@ export function CardStory({item, isActive}:{item:any, isActive: boolean}) {
   )
 }
 
-export function CarouselBox({ items }: PropsCard) {
+export function CarouselBox({ items, childrenNavigation }: PropsCard) {
 
   const [cardIndex, setCardIndex] = React.useState(0)
   const [api, setApi] = React.useState<CarouselApi>()
@@ -80,9 +81,14 @@ export function CarouselBox({ items }: PropsCard) {
       className="w-full"
       setApi={setApi}
     >
-      <div className="relative w-[100%] flex justify-end gap-5">
-        <CarouselPrevious className="" />
-        <CarouselNext className="" />
+      <div className="relative w-[100%] flex justify-between items-center mb-4">
+        <div>
+          {childrenNavigation}
+        </div>
+        <div className="flex items-center gap-5">
+          <CarouselPrevious className="" />
+          <CarouselNext className="" />
+        </div>
       </div>
       <div className={clsx("w-full", {'mask-linear mask-dir-to-r  mask-point-from-[80%]': (count-1) !== cardIndex})}>
         <CarouselContent className="">

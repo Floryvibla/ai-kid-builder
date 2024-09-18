@@ -40,16 +40,29 @@ export function HeroStory() {
       </section>
       <div className='flex flex-col px-[5%]'>
         <Tabs defaultValue={tabActive} className="">
-          <TabsList className='border backdrop-blur-md bg-black/40'>
-            <TabsTrigger value="my_stories">Minhas histórias</TabsTrigger>
-            |
-            <TabsTrigger value="explorer">Explorar</TabsTrigger>
-          </TabsList>
           <TabsContent value="my_stories">
-            <CarouselBox items={films1}/>
+            <CarouselBox 
+              items={films1}
+              childrenNavigation={(
+                <TabsList className='border backdrop-blur-md bg-black/40'>
+                  <TabsTrigger value="my_stories">Minhas histórias</TabsTrigger>
+                  |
+                  <TabsTrigger value="explorer">Explorar</TabsTrigger>
+                </TabsList>
+              )}
+            />
           </TabsContent>
           <TabsContent value="explorer">
-            <CarouselBox items={films2}/>
+            <CarouselBox 
+              items={films2}
+              childrenNavigation={(
+                <TabsList className='border backdrop-blur-md bg-black/40'>
+                  <TabsTrigger value="my_stories">Minhas histórias</TabsTrigger>
+                  |
+                  <TabsTrigger value="explorer">Explorar</TabsTrigger>
+                </TabsList>
+              )}
+            />
           </TabsContent>
         </Tabs>
       </div>

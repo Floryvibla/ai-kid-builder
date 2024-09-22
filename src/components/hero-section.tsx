@@ -2,6 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 import { Button } from './ui/button'
 import Link from 'next/link'
+import ButtonAuthCTA from './button-client'
 
 export default function HeroSection() {
   return (
@@ -21,14 +22,7 @@ export default function HeroSection() {
             Crie histórias divertidas e personalizadas que trazem vida às aventuras da sua criança e ajudam a construir uma imagem positiva e inspiradora. É rápido e fácil, e vai encantar qualquer criança.
           </p>
         </div>
-        <Button 
-          asChild 
-          className='bg-purple-700 mt-4 text-lg md:text-2xl font-bold md:p-7 md:rounded-2xl shadow-2xl hover:bg-purple-700/90'
-        >
-          <Link href={'/dashboard'} className=''>
-            Criar história
-          </Link>
-        </Button>
+        <ButtonAuthCTA/>
       </div>
     </div>
   )

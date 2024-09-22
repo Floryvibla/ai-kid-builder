@@ -4,6 +4,7 @@ import { Joti_One } from "next/font/google"
 import "./globals.css";
 import 'swiper/css';
 import Header from "@/components/header";
+import SessionProviderApp from '@/components/provider'
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,8 +37,10 @@ export default function RootLayout({
       <body
         className={`${joti_One.variable} antialiased`}
       >
-        <Header/>
-        {children}
+        <SessionProviderApp>
+          <Header/>
+          {children}
+        </SessionProviderApp>
       </body>
     </html>
   );

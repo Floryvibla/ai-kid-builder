@@ -15,7 +15,7 @@ export default function Header() {
     <header className='w-screen p-5 md:px-[5%] bg-transparent text-white flex items-center justify-between z-50'>
       <Link href={'/'} className='flex items-center gap-2'>
         <div className='h-[30px] w-[30px] md:h-[50px] md:w-[50px] relative'>
-          <Image src={'/logo.svg'} alt='logo' fill objectFit='cover' />
+          <Image src={'/logo.svg'} alt='logo' fill className='object-cover' />
         </div>
         <h1 className='text-xl md:text-3xl font-black text-primary font-["var(--font-joti_One)"]'>Jujuba</h1>
       </Link>

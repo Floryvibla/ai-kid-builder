@@ -13,6 +13,8 @@ import { Textarea } from "./ui/textarea"
 import { Button } from "./ui/button"
 import { ModalProvider } from "./modal-provider"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
+import axios from "axios"
+import { LoaderIcon } from "lucide-react"
 
 // Tipos
 interface StoryData {
@@ -20,35 +22,43 @@ interface StoryData {
   message: string;
 }
 
+interface StoryGenerateProps {
+  cover_prompt?: string;
+  moral_lesson?: string;
+  sinopse: string;
+  title: string;
+}
+
 interface ChooseStoryProps {
-  data: StoryData;
+  data: StoryGenerateProps[];
   onClickCard: () => void
 }
 
 // Componentes
-const StoryChooseCard = ({onClick}:{onClick: () => void}) => (
+const StoryChooseCard = ({onClick, item, index}:{onClick: () => void, item:StoryGenerateProps, index?:number}) => (
   <Card 
     onClick={onClick}
     className='backdrop-blur-md bg-black/30 h-[150px] flex w-full gap-4 hover:bg-purple-400/10 hover:border-purple-700/70 cursor-pointer'
   >
-    <div className="w-[30%] relative h-full">
-      <Image 
+    <div className="w-[30%] rounded-tl-lg rounded-bl-lg relative h-full backdrop-blur-md bg-white/35 text-4xl text-center flex justify-center items-center">
+      {/* <Image 
         src={'https://blackoutv.com/wp-content/uploads/2023/12/7KkHiZMvEdEZq2qrQX3kzYA7Off-288x400.jpg'}
         alt=""
         fill
         objectFit="cover"
         className="rounded-lg"
-      />
+      /> */}
+      {index}
     </div>
     <div className="flex-1 p-1">
       <CardHeader className="p-0">
         <CardTitle className="text-base font-semibold">
-          Nenhuma história ainda
+          {item.title}
         </CardTitle>
       </CardHeader>
-      <CardContent className='flex flex-col justify-between p-0'>
+      <CardContent className='flex flex-col justify-between p-0 text-wrap'>
         <CardDescription>
-          Parece que você ainda não criou uma história. Adicione uma nova agora!
+          {item.sinopse}
         </CardDescription>
       </CardContent>
     </div>
@@ -57,25 +67,43 @@ const StoryChooseCard = ({onClick}:{onClick: () => void}) => (
 
 const ChooseStory: React.FC<ChooseStoryProps> = ({ data, onClickCard }) => (
   <>
-    <DialogHeader>
-      <DialogTitle className="mb-4 text-primary text-left">Escolhe uma História</DialogTitle>
+    <DialogHeader className="text-left">
+      <DialogTitle className="text-primary">Escolhe uma História</DialogTitle>
+      <CardDescription className="text-gray-300">Clique num card para escolher uma história a ser criado</CardDescription>
     </DialogHeader>
     <div className="flex flex-col gap-2">
-      {[1, 2, 3].map((_, index) => (
-        <StoryChooseCard key={index} onClick={onClickCard} />
+      {data.map((item, index) => (
+        <StoryChooseCard key={index} item={item} onClick={onClickCard} index={index+1} />
       ))}
     </div>
   </>
 )
 
-const StoryForm: React.FC<{ onSubmit: (data: StoryData) => void }> = ({ onSubmit }) => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+const StoryForm: React.FC<{ onSubmit: (data: StoryGenerateProps[]) => void }> = ({ onSubmit }) => {
+
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    setLoading(true)
+
     const formData = new FormData(event.currentTarget);
-    onSubmit({
+
+    const data = {
       age: formData.get('age') as string,
       message: formData.get('message') as string
-    });
+    }
+    try {
+      const response = await axios.post('/api/stories/generate', data)
+      onSubmit(response.data)
+
+    } catch (error) {
+      console.log("Error to generate stories: ", error);
+    }finally {
+      setLoading(false)
+    }
+    
   }
 
   return (
@@ -93,15 +121,16 @@ const StoryForm: React.FC<{ onSubmit: (data: StoryData) => void }> = ({ onSubmit
         variant={'outline'} 
         type="submit"
         className="w-full mt-6 rounded-full backdrop-blur-sm bg-purple-700/30 border-gray-300/30 py-6 hover:bg-purple-700/35"
+        disabled={loading}
       >
-        Gerar história 
+        {loading ? <LoaderIcon className="animate-spin"/> : "Gerar história" }
       </Button>
     </form>
   )
 }
 
 export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  const [generateStories, setGenerateStories] = useState<StoryData | null>(null)
+  const [generateStories, setGenerateStories] = useState<StoryGenerateProps[] | null>(null)
   
   async function handleChooseStory() {
     

@@ -15,6 +15,9 @@ export default function ButtonAuthCTA() {
     signIn('google', { callbackUrl: "/dashboard" })
   }
 
+  // console.log('session: ', session);
+  
+
   return (
     <Button
       className='bg-purple-700 mt-4 text-lg md:text-2xl font-bold md:p-7 md:rounded-2xl shadow-2xl hover:bg-purple-700/90'

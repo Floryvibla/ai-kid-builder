@@ -9,6 +9,7 @@ import {
 interface Props {
   items?: string[]
   placeholder?: string
+  name?: string
 }
 
 const ages = [
@@ -21,10 +22,11 @@ const ages = [
 
 export function SelectItemBox({
   items = ages,
-  placeholder = "Idade da criança"
+  placeholder = "Idade da criança",
+  name
 }:Props) {
   return (
-    <Select>
+    <Select name={name}>
       <SelectTrigger className="w-[100%] border-gray-300/50">
         Idade da criança
         <SelectValue defaultValue={'3 a 6 anos'} />

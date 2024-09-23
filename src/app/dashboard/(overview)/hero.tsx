@@ -4,12 +4,15 @@
 import { CarouselBox } from '@/components/carousel-section'
 import { ModalView } from '@/components/modal-view'
 import Image from 'next/image'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CarouselItem } from '@/components/ui/carousel'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PlusIcon } from 'lucide-react'
+import { StoryCardEmpty } from '@/components/story-card-empty'
+import MyStorieTab from './mystories-tab'
+import { TabStoryLoading } from '@/components/loadings'
 
 const films1 = [
   "https://blackoutv.com/wp-content/uploads/2023/12/7KkHiZMvEdEZq2qrQX3kzYA7Off-288x400.jpg",
@@ -45,37 +48,9 @@ export function HeroStory() {
       <div className='flex flex-col px-[5%]'>
         <Tabs defaultValue={tabActive} className="">
           <TabsContent value="my_stories">
-            <CarouselBox 
-              items={films1}
-              childrenNavigation={(
-                <TabsList className='border bg-white/20 text-gray-400'>
-                  <TabsTrigger value="my_stories">Minhas histórias</TabsTrigger>
-                  <TabsTrigger value="explorer">Explorar</TabsTrigger>
-                </TabsList>
-              )}
-              carouselItemChildren={(
-                <CarouselItem className='basis-[220px] lg:basis-[227px]'>
-                  <Card className='backdrop-blur-md bg-black/30 h-[300px] md:h-[315px] flex flex-col'>
-                    <CardHeader>
-                      <CardTitle className="text-lg font-semibold ">
-                        Nenhuma história ainda
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className='flex-1 flex flex-col justify-between'>
-                        <p className="text-gray-300 mb-4">
-                          Parece que você ainda não criou uma história. Adicione uma nova agora!
-                        </p>
-                        <ModalView>
-                          <Button className="flex items-center justify-center gap-2 w-full bg-purple-700 hover:bg-purple-700/80">
-                            <PlusIcon className="w-5 h-5" />
-                            Adicionar 
-                          </Button>
-                        </ModalView>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-              )}
-            />
+            <Suspense fallback={<TabStoryLoading/>}>
+              <MyStorieTab/>
+            </Suspense>
           </TabsContent>
           <TabsContent value="explorer">
             <CarouselBox 

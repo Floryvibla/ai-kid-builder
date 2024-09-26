@@ -2,17 +2,10 @@ import { API } from "@/config/api";
 import { getUserLanguage, isAuthorized, serverSession } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
-export interface GenerateStoryVideoJujuba {
-  title: string;
-  sinopse: string;
-  moral_lesson: string;
-  language: string;
-}
-
 export async function POST(req: NextRequest) {
   try {
 
-    // const userLanguage = getUserLanguage(req);
+    const userLanguage = getUserLanguage(req);
     const session = await serverSession();
     
     if (!session || !isAuthorized(session)) {
@@ -21,11 +14,11 @@ export async function POST(req: NextRequest) {
 
     // Assume que o ID do usuário está disponível em session.user.id
     const userId = session.user.id;
-    const dataUser:GenerateStoryVideoJujuba = await req.json()
+    const dataUser = await req.json()
     
     const response = await generateStories(dataUser)
 
-    return NextResponse.json(JSON.parse(response));
+    return NextResponse.json(response);
 
   } catch (error) {
     console.error("Error: ", error);
@@ -33,7 +26,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function generateStories(data:GenerateStoryVideoJujuba) {
-  const response = await API.post('/stories/generate', data);
+async function generateStories(data:{age:string, message:string}) {
+  const response = await API.post('/intro-stories/generate', data);
   return response.data;
 }

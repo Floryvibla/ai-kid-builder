@@ -15,6 +15,8 @@ import { ModalProvider } from "./modal-provider"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import axios from "axios"
 import { LoaderIcon } from "lucide-react"
+import { GenerateStoryVideoJujuba } from "@/app/api/stories/generate/route"
+import clsx from "clsx"
 
 // Tipos
 interface StoryData {
@@ -22,23 +24,33 @@ interface StoryData {
   message: string;
 }
 
-interface StoryGenerateProps {
-  cover_prompt?: string;
-  moral_lesson?: string;
-  sinopse: string;
-  title: string;
-}
 
 interface ChooseStoryProps {
-  data: StoryGenerateProps[];
-  onClickCard: () => void
+  data: GenerateStoryVideoJujuba[];
+  indexActive: number | null
+  onClickCard: (item:GenerateStoryVideoJujuba, index:number) => void
 }
 
 // Componentes
-const StoryChooseCard = ({onClick, item, index}:{onClick: () => void, item:StoryGenerateProps, index?:number}) => (
+const StoryChooseCard = ({
+  onClick, 
+  item, 
+  index,
+  indexActive
+}:{
+  onClick: () => void, 
+  item:GenerateStoryVideoJujuba, 
+  index?:number, 
+  indexActive: number | null
+}) => (
   <Card 
     onClick={onClick}
-    className='backdrop-blur-md bg-black/30 h-[150px] flex w-full gap-4 hover:bg-purple-400/10 hover:border-purple-700/70 cursor-pointer'
+    className={clsx(
+      'backdrop-blur-md bg-black/30 h-[150px] flex w-full gap-4 hover:bg-purple-400/10 hover:border-purple-700/70 cursor-pointer',
+      {
+        "bg-purple-400/10 border-purple-700/70": index === indexActive
+      }
+    )}
   >
     <div className="w-[30%] rounded-tl-lg rounded-bl-lg relative h-full backdrop-blur-md bg-white/35 text-4xl text-center flex justify-center items-center">
       {/* <Image 
@@ -48,7 +60,7 @@ const StoryChooseCard = ({onClick, item, index}:{onClick: () => void, item:Story
         objectFit="cover"
         className="rounded-lg"
       /> */}
-      {index}
+      {index!+1}
     </div>
     <div className="flex-1 p-1">
       <CardHeader className="p-0">
@@ -65,7 +77,7 @@ const StoryChooseCard = ({onClick, item, index}:{onClick: () => void, item:Story
   </Card>
 )
 
-const ChooseStory: React.FC<ChooseStoryProps> = ({ data, onClickCard }) => (
+const ChooseStory: React.FC<ChooseStoryProps> = ({ data, onClickCard, indexActive }) => (
   <>
     <DialogHeader className="text-left">
       <DialogTitle className="text-primary">Escolhe uma História</DialogTitle>
@@ -73,13 +85,19 @@ const ChooseStory: React.FC<ChooseStoryProps> = ({ data, onClickCard }) => (
     </DialogHeader>
     <div className="flex flex-col gap-2">
       {data.map((item, index) => (
-        <StoryChooseCard key={index} item={item} onClick={onClickCard} index={index+1} />
+        <StoryChooseCard 
+          key={index} 
+          item={item} 
+          onClick={() => onClickCard(item, index)} 
+          index={index} 
+          indexActive={indexActive}
+        />
       ))}
     </div>
   </>
 )
 
-const StoryForm: React.FC<{ onSubmit: (data: StoryGenerateProps[]) => void }> = ({ onSubmit }) => {
+const StoryForm: React.FC<{ onSubmit: (data: GenerateStoryVideoJujuba[]) => void }> = ({ onSubmit }) => {
 
   const [loading, setLoading] = useState(false)
 
@@ -95,7 +113,7 @@ const StoryForm: React.FC<{ onSubmit: (data: StoryGenerateProps[]) => void }> = 
       message: formData.get('message') as string
     }
     try {
-      const response = await axios.post('/api/stories/generate', data)
+      const response = await axios.post('/api/stories/generate/intro', data)
       onSubmit(response.data)
 
     } catch (error) {
@@ -130,11 +148,27 @@ const StoryForm: React.FC<{ onSubmit: (data: StoryGenerateProps[]) => void }> = 
 }
 
 export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  const [generateStories, setGenerateStories] = useState<StoryGenerateProps[] | null>(null)
+  const [generateStories, setGenerateStories] = useState<GenerateStoryVideoJujuba[] | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [storyIntroIndex, setStoryIntroIndex] = useState<number | null>(null)
   
-  async function handleChooseStory() {
+  async function handleChooseStory(storyChoose:GenerateStoryVideoJujuba, index:number) {
+    setStoryIntroIndex(index)
+    setLoading(true)
     
+    try {
+      const response = await axios.post('/api/stories/generate', storyChoose)
+
+      console.log("response: ", response.data);
+      
+
+    } catch (error) {
+      console.log("Error to generate stories: ", error);
+    }finally {
+      setLoading(false)
+    }
   }
+  
 
   return (
     <ModalProvider>
@@ -143,7 +177,7 @@ export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }
       </DialogTrigger>
       <DialogContent className="backdrop-blur-lg bg-black/40 border-gray-300/30 text-white">
         {generateStories ? (
-          <ChooseStory data={generateStories} onClickCard={handleChooseStory} />
+          <ChooseStory data={generateStories} onClickCard={handleChooseStory} indexActive={storyIntroIndex} />
         ) : (
           <>
             <DialogHeader>

@@ -1,5 +1,3 @@
-import { ISceneStory } from "@/@types/scene";
-import { StoryData } from "@/components/modal-view";
 import { API } from "@/config/api";
 import { getUserLanguage, isAuthorized, serverSession } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,15 +7,6 @@ export interface GenerateStoryVideoJujuba {
   sinopse: string;
   moral_lesson: string;
   language: string;
-  images: {
-    landscape: string
-    portrait: string;
-  }
-}
-
-interface BodyGenerateStoryVideoJujuba {
-  storyChoose:GenerateStoryVideoJujuba
-  introData: StoryData
 }
 
 export async function POST(req: NextRequest) {
@@ -32,9 +21,9 @@ export async function POST(req: NextRequest) {
 
     // Assume que o ID do usuário está disponível em session.user.id
     const userId = session.user.id;
-    const dataUser:BodyGenerateStoryVideoJujuba = await req.json()
+    const dataUser:GenerateStoryVideoJujuba = await req.json()
     
-    const response = await generateStories(dataUser.storyChoose)
+    const response = await generateStories(dataUser)
 
     return NextResponse.json(JSON.parse(response));
 
@@ -49,7 +38,29 @@ async function generateStories(data:GenerateStoryVideoJujuba) {
   return response.data;
 }
 
-async function createScene(data:ISceneStory) {
-  const response = await API.post('/stories/generate', data);
-  return response.data;
+
+export async function GET(req: NextRequest) {
+  try {
+
+    // const userLanguage = getUserLanguage(req);
+    // const session = await serverSession();
+    
+    // if (!session || !isAuthorized(session)) {
+    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // }
+
+    // // Assume que o ID do usuário está disponível em session.user.id
+    // const userId = session.user.id;
+    // const dataUser:GenerateStoryVideoJujuba = await req.json()
+    console.log("AQUI");
+    
+    
+    const response = await API.post('/stories/generate');
+
+    return NextResponse.json(response.data);
+
+  } catch (error) {
+    console.error("Error: ", error);
+    return NextResponse.json({ error: 'An error occurred' }, { status: 500 });
+  }
 }

@@ -17,12 +17,11 @@ import axios from "axios"
 import { LoaderIcon } from "lucide-react"
 import { GenerateStoryVideoJujuba } from "@/app/api/stories/generate/route"
 import clsx from "clsx"
+import { generateIntro } from "@/lib/data/intro-story"
+import { IGenerateIntroStory, IIntroStory } from "@/@types/intro"
+import { createStory } from "@/lib/data/stories"
 
-// Tipos
-interface StoryData {
-  age: string;
-  message: string;
-}
+
 
 
 interface ChooseStoryProps {
@@ -54,8 +53,8 @@ const StoryChooseCard = ({
   >
     <div className="w-[30%] rounded-tl-lg rounded-bl-lg relative h-full backdrop-blur-md bg-white/35 text-4xl text-center flex justify-center items-center">
       {/* <Image 
-        src={'https://blackoutv.com/wp-content/uploads/2023/12/7KkHiZMvEdEZq2qrQX3kzYA7Off-288x400.jpg'}
-        alt=""
+        src={item.images.portrait}
+        alt={item.title}
         fill
         objectFit="cover"
         className="rounded-lg"
@@ -97,8 +96,10 @@ const ChooseStory: React.FC<ChooseStoryProps> = ({ data, onClickCard, indexActiv
   </>
 )
 
-const StoryForm: React.FC<{ onSubmit: (data: GenerateStoryVideoJujuba[]) => void }> = ({ onSubmit }) => {
-
+const StoryForm: React.FC<{ 
+  onSubmit: (data: IIntroStory[]) => void, 
+  introData: (data:IGenerateIntroStory) => void
+}> = ({ onSubmit, introData }) => {
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
@@ -108,13 +109,16 @@ const StoryForm: React.FC<{ onSubmit: (data: GenerateStoryVideoJujuba[]) => void
 
     const formData = new FormData(event.currentTarget);
 
-    const data = {
+    const data:IGenerateIntroStory = {
       age: formData.get('age') as string,
       message: formData.get('message') as string
     }
     try {
-      const response = await axios.post('/api/stories/generate/intro', data)
-      onSubmit(response.data)
+      introData && introData(data)
+      const response = await generateIntro(data)
+      console.log("response: ", response);
+      
+      onSubmit(response)
 
     } catch (error) {
       console.log("Error to generate stories: ", error);
@@ -148,26 +152,30 @@ const StoryForm: React.FC<{ onSubmit: (data: GenerateStoryVideoJujuba[]) => void
 }
 
 export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  const [generateStories, setGenerateStories] = useState<GenerateStoryVideoJujuba[] | null>(null)
+  const [generateStories, setGenerateStories] = useState<IIntroStory[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [storyIntroIndex, setStoryIntroIndex] = useState<number | null>(null)
+  const [introData, setIntroData] = useState<IGenerateIntroStory | null>(null)
   
   async function handleChooseStory(storyChoose:GenerateStoryVideoJujuba, index:number) {
-    setStoryIntroIndex(index)
-    setLoading(true)
-    
-    try {
-      const response = await axios.post('/api/stories/generate', storyChoose)
-
-      console.log("response: ", response.data);
+    if (generateStories) {
+      setStoryIntroIndex(index)
+      setLoading(true)
       
+      try {
+        const response = await createStory({user_prompt: introData!, story: generateStories[index]})
 
-    } catch (error) {
-      console.log("Error to generate stories: ", error);
-    }finally {
-      setLoading(false)
+        console.log("response: ", response.data);
+        
+
+      } catch (error) {
+        console.log("Error to generate stories: ", error);
+      }finally {
+        setLoading(false)
+      }
     }
   }
+  
   
 
   return (
@@ -177,13 +185,13 @@ export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }
       </DialogTrigger>
       <DialogContent className="backdrop-blur-lg bg-black/40 border-gray-300/30 text-white">
         {generateStories ? (
-          <ChooseStory data={generateStories} onClickCard={handleChooseStory} indexActive={storyIntroIndex} />
+          <ChooseStory data={generateStories as any} onClickCard={handleChooseStory} indexActive={storyIntroIndex} />
         ) : (
           <>
             <DialogHeader>
               <DialogTitle className="mb-4 text-primary text-left">Qual é a sua ideia para a história?</DialogTitle>
             </DialogHeader>
-            <StoryForm onSubmit={setGenerateStories} />
+            <StoryForm onSubmit={setGenerateStories} introData={setIntroData}/>
           </>
         )}
       </DialogContent>

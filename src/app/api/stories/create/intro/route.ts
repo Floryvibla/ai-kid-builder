@@ -1,4 +1,6 @@
+import { IIntroStory } from "@/@types/intro";
 import { API } from "@/config/api";
+import { createIntroStoryJujuba } from "@/lib/data/intro-story";
 import { getUserLanguage, isAuthorized, serverSession } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,10 +15,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Assume que o ID do usuário está disponível em session.user.id
-    const userId = session.user.id;
+    const owner = session.user.id;
     const dataUser = await req.json()
     
-    const response = await generateStories(dataUser)
+    const response = await createIntroStoryJujuba({...dataUser, owner})
 
     return NextResponse.json(response);
 
@@ -26,7 +28,3 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function generateStories(data:{age:string, message:string}) {
-  const response = await API.post('/intro-stories/generate', data);
-  return response.data;
-}

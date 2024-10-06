@@ -16,3 +16,11 @@ export function TabStoryLoading() {
     </div>
   )
 }
+
+export function StoryChooseCardLoading() {
+  return (
+    <div className="backdrop-blur-md bg-white/10 h-[150px] flex w-full gap-4 animate-pulse rounded-lg">
+      
+    </div>
+  )
+}

@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import Image from "next/image"
 import {
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -14,12 +15,13 @@ import { Button } from "./ui/button"
 import { ModalProvider } from "./modal-provider"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import axios from "axios"
-import { LoaderIcon } from "lucide-react"
+import { ChevronLeft, ChevronRight, LoaderIcon, X } from "lucide-react"
 import { GenerateStoryVideoJujuba } from "@/app/api/stories/generate/route"
 import clsx from "clsx"
 import { generateIntro } from "@/lib/data/intro-story"
 import { IGenerateIntroStory, IIntroStory } from "@/@types/intro"
 import { createStory } from "@/lib/data/stories"
+import { StoryChooseCardLoading } from "./loadings"
 
 
 
@@ -29,6 +31,15 @@ interface ChooseStoryProps {
   indexActive: number | null
   onClickCard: (item:GenerateStoryVideoJujuba, index:number) => void
 }
+
+
+// export default function ImageCardFetch(url:string) {
+//   const fetchImg = axios.
+//   return (
+//     <div>modal-view</div>
+//   )
+// }
+
 
 // Componentes
 const StoryChooseCard = ({
@@ -41,40 +52,62 @@ const StoryChooseCard = ({
   item:GenerateStoryVideoJujuba, 
   index?:number, 
   indexActive: number | null
-}) => (
-  <Card 
-    onClick={onClick}
-    className={clsx(
-      'backdrop-blur-md bg-black/30 h-[150px] flex w-full gap-4 hover:bg-purple-400/10 hover:border-purple-700/70 cursor-pointer',
-      {
-        "bg-purple-400/10 border-purple-700/70": index === indexActive
+}) => {
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const response = await axios.get(item.cover_prompt);
+        const base64 = response.data
+        setImageBase64(base64);
+      } catch (error) {
+        console.error('Erro ao buscar a imagem:', error);
       }
-    )}
-  >
-    <div className="w-[30%] rounded-tl-lg rounded-bl-lg relative h-full backdrop-blur-md bg-white/35 text-4xl text-center flex justify-center items-center">
-      {/* <Image 
-        src={item.images.portrait}
-        alt={item.title}
-        fill
-        objectFit="cover"
-        className="rounded-lg"
-      /> */}
-      {index!+1}
-    </div>
-    <div className="flex-1 p-1">
-      <CardHeader className="p-0">
-        <CardTitle className="text-base font-semibold">
-          {item.title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className='flex flex-col justify-between p-0 text-wrap'>
-        <CardDescription>
-          {item.sinopse}
-        </CardDescription>
-      </CardContent>
-    </div>
-  </Card>
-)
+    };
+
+    fetchImage();
+  }, [item.cover_prompt]);
+  
+
+  return (
+    <Card 
+      onClick={onClick}
+      className={clsx(
+        'backdrop-blur-md bg-black/30 h-[150px] flex w-full gap-4 hover:bg-purple-400/10 hover:border-purple-700/70 cursor-pointer',
+        {
+          "bg-purple-400/10 border-purple-700/70": index === indexActive
+        }
+      )}
+    >
+      <div className="w-[30%] rounded-tl-lg rounded-bl-lg relative h-full backdrop-blur-md bg-white/35 text-4xl text-center flex justify-center items-center">
+      {imageBase64 ? (
+        <Image 
+          src={`data:image/jpeg;base64,${imageBase64}`}
+          alt={item.title}
+          fill
+          objectFit="cover"
+          className="rounded-tl-lg rounded-bl-lg"
+        />
+      ) : (
+        index!+1
+      )}
+      </div>
+      <div className="flex-1 p-1">
+        <CardHeader className="p-0">
+          <CardTitle className="text-base font-semibold">
+            {item.title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className='flex flex-col justify-between p-0 text-wrap'>
+          <CardDescription>
+            {item.sinopse}
+          </CardDescription>
+        </CardContent>
+      </div>
+    </Card>
+  )
+}
 
 const ChooseStory: React.FC<ChooseStoryProps> = ({ data, onClickCard, indexActive }) => (
   <>
@@ -83,7 +116,7 @@ const ChooseStory: React.FC<ChooseStoryProps> = ({ data, onClickCard, indexActiv
       <CardDescription className="text-gray-300">Clique num card para escolher uma história a ser criado</CardDescription>
     </DialogHeader>
     <div className="flex flex-col gap-2">
-      {data.map((item, index) => (
+      {data.length > 0 && data.map((item, index) => (
         <StoryChooseCard 
           key={index} 
           item={item} 
@@ -92,6 +125,7 @@ const ChooseStory: React.FC<ChooseStoryProps> = ({ data, onClickCard, indexActiv
           indexActive={indexActive}
         />
       ))}
+      {data.length !== 3 && [...Array(3 - data.length)].map((_, index) => <StoryChooseCardLoading/>)}
     </div>
   </>
 )
@@ -115,10 +149,23 @@ const StoryForm: React.FC<{
     }
     try {
       introData && introData(data)
-      const response = await generateIntro(data)
-      console.log("response: ", response);
-      
-      onSubmit(response)
+      const response = await fetch('/api/stories/generate/intro', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      })
+      const reader = response.body?.getReader()
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) {
+            break;
+          }
+          const result = new TextDecoder().decode(value)
+          const json = JSON.parse(result)
+          onSubmit(json.data)
+        }
+      }
 
     } catch (error) {
       console.log("Error to generate stories: ", error);
@@ -127,6 +174,7 @@ const StoryForm: React.FC<{
     }
     
   }
+  
 
   return (
     <form onSubmit={handleSubmit}>
@@ -152,7 +200,7 @@ const StoryForm: React.FC<{
 }
 
 export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
-  const [generateStories, setGenerateStories] = useState<IIntroStory[] | null>(null)
+  const [generateStories, setGenerateStories] = useState<IIntroStory[]>([])
   const [loading, setLoading] = useState(false)
   const [storyIntroIndex, setStoryIntroIndex] = useState<number | null>(null)
   const [introData, setIntroData] = useState<IGenerateIntroStory | null>(null)
@@ -176,15 +224,25 @@ export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }
     }
   }
   
-  
 
   return (
     <ModalProvider>
       <DialogTrigger asChild>
         {children ?? 'Abrir'}
       </DialogTrigger>
-      <DialogContent className="backdrop-blur-lg bg-black/40 border-gray-300/30 text-white">
-        {generateStories ? (
+      <DialogContent 
+        className="backdrop-blur-lg bg-black/40 border-gray-300/30 text-white"
+        dialogClose={generateStories ? (
+          <Button 
+            variant={'ghost'}
+            className="hover:bg-transparent"
+            onClick={() => setGenerateStories([])}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        ) : false}
+      >
+        {generateStories.length > 0 ? (
           <ChooseStory data={generateStories as any} onClickCard={handleChooseStory} indexActive={storyIntroIndex} />
         ) : (
           <>

@@ -2,7 +2,7 @@ import { IGenerateIntroStory, IIntroStory } from "@/@types/intro"
 import { API, API_FRONT } from "@/config/api"
 
 export const generateIntro = async (data: IGenerateIntroStory) => {
-  const response = await API_FRONT.post<IIntroStory[]>('/stories/generate/intro', data)
+  const response = await API_FRONT.post('/stories/generate/intro', data, {responseType: 'stream'})
   return response.data
 }
 

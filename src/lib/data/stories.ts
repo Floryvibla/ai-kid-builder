@@ -8,11 +8,17 @@ export const generateIntro = async (data: IGenerateIntroStory) => {
 }
 
 export const createStoryJujuba = async (data:ICreateStoryJujuba) => {
-  const response = await API.post('/stories/generate', data);
+  const response = await API.post('/stories/generate', data, {responseType: 'stream'});
   return response.data;
 }
 
 export const createStory = async (data:ICreateStoryJujuba) => {
-  const response = await API_FRONT.post('/stories/mystories', data);
-  return response.data;
+  const response = await fetch('/api/stories/mystories', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  })
+
+  const reader = response.body?.getReader()
+
+  return reader
 }

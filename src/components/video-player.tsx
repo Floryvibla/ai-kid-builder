@@ -1,8 +1,10 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+import { Player } from "@remotion/player";
 import { Progress } from './ui/progress'
 import { Pause, Play, Volume, VolumeOff } from 'lucide-react';
+import { RemotionVideo } from './remotion/composition';
 
 interface VideoPlayerProps {
   src: string;
@@ -11,15 +13,22 @@ interface VideoPlayerProps {
   loop?: boolean;
 }
 
-export function PreviewPlayer() {
+export function PreviewPlayer({message, progress}:{message: string, progress:number}) {
   return (
-    <div className='text-sm md:text-base w-full h-[450px] md:h-[600px] rounded-lg shadow-lg flex items-center justify-center flex-col gap-2 pt-5'>
-      <h1>Estou processando seu video</h1>
-      <div className=' bg-gray-500/30 rounded-lg w-[250px] md:w-[65%] h-full flex items-center justify-center flex-col px-5 gap-2'>
-        <div>Analisando seu video</div>
-        <Progress value={33} />
-      </div>
-    </div>
+    // <div className='text-sm md:text-base w-full h-[450px] md:h-[600px] rounded-lg shadow-lg flex items-center justify-center flex-col gap-2 pt-5'>
+    //   <h1>Criando sua historia...</h1>
+    //   <div className=' bg-gray-500/30 rounded-lg w-[250px] md:w-[65%] h-full flex items-center justify-center flex-col px-5 gap-2'>
+    //     <div>{message}</div>
+    //     <Progress value={progress} />
+    //   </div>
+    // </div>
+    <Player
+      component={RemotionVideo}
+      durationInFrames={120}
+      compositionWidth={1920}
+      compositionHeight={1080}
+      fps={30}
+    />
   )
 }
 

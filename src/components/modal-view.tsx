@@ -203,20 +203,36 @@ const StoryForm: React.FC<{
 export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [generateStories, setGenerateStories] = useState<IIntroStory[]>([])
   const [loading, setLoading] = useState(false)
-  const [videoPlayer, setVideoPlayer] = useState(false)
+  const [videoPlayerStream, setVideoPlayerStream] = useState<{message:string, status: string, progress:number} | null>(null)
   const [storyIntroIndex, setStoryIntroIndex] = useState<number | null>(null)
   const [introData, setIntroData] = useState<IGenerateIntroStory | null>(null)
+
+  // const response = await fetch('/api/stories/generate/intro', {
+  //   method: 'POST',
+  //   body: JSON.stringify(data)
+  // })
+  // const reader = response.body?.getReader()
+
+
   
   async function handleChooseStory(storyChoose:GenerateStoryVideoJujuba, index:number) {
     if (generateStories) {
       setStoryIntroIndex(index)
       setLoading(true)
-      
       try {
         const response = await createStory({user_prompt: introData!, story: generateStories[index]})
 
-        console.log("response: ", response.data);
-        
+        if (response) {
+          while (true) {
+            const { done, value } = await response.read()
+            if (done) {
+              break;
+            }
+            const result = new TextDecoder().decode(value)
+            const json = JSON.parse(result)
+            setVideoPlayerStream(json)
+          }
+        }
 
       } catch (error) {
         console.log("Error to generate stories: ", error);
@@ -244,9 +260,9 @@ export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }
           </Button>
         ) : false}
       >
-        {!videoPlayer && generateStories.length > 0 ? (
+        {!videoPlayerStream && generateStories.length > 0 ? (
           <ChooseStory data={generateStories as any} onClickCard={handleChooseStory} indexActive={storyIntroIndex} />
-        ) : !videoPlayer && (
+        ) : !videoPlayerStream && (
           <>
             <DialogHeader>
               <DialogTitle className="mb-4 text-primary text-left">Qual é a sua ideia para a história?</DialogTitle>
@@ -254,11 +270,15 @@ export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }
             <StoryForm onSubmit={setGenerateStories} introData={setIntroData}/>
           </>
         )}
-        {videoPlayer && (
-          <PreviewPlayer />
-          // <VideoPlayer
-          //   src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-          // />
+        {videoPlayerStream && (
+          videoPlayerStream.status === 'progress' ? (
+            <PreviewPlayer {...videoPlayerStream} />
+          ): (
+            <VideoPlayer
+              src={'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'}
+              // onProgress={(progress) => setVideoPlayerStream({...videoPlayerStream, progress})}
+            />
+          )
         )}
       </DialogContent>
     </ModalProvider>

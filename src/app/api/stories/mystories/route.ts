@@ -3,6 +3,7 @@ import { API } from "@/config/api";
 import { createStoryJujuba } from "@/lib/data/stories";
 import { isAuthorized, serverSession } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
+import { Readable } from "stream";
 
 export interface GenerateStoryVideoJujuba {
   title: string;
@@ -64,9 +65,9 @@ export async function POST(req: NextRequest) {
     const userId = session.user.id;
     const dataUser:ICreateStoryJujuba = await req.json()
     
-    const response = await createStoryJujuba(dataUser)
+    const responseStream = await streamData(dataUser)
 
-    return NextResponse.json(response);
+    return new NextResponse(responseStream)
 
   } catch (error) {
     console.error("Error: ", error);
@@ -74,3 +75,19 @@ export async function POST(req: NextRequest) {
   }
 }
 
+async function streamData(data:any) {
+
+  const nodeStream:Readable = await createStoryJujuba(data)
+
+  const readableStream = new ReadableStream({
+    async start(controller) {
+      nodeStream.on('data', (chunk) => {
+        controller.enqueue(chunk);
+      });
+      nodeStream.on('end', () => controller.close());
+      nodeStream.on('error', (err) => controller.error(err));
+    },
+  });
+
+  return readableStream;
+}

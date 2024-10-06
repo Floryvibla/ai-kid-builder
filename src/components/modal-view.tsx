@@ -22,6 +22,7 @@ import { generateIntro } from "@/lib/data/intro-story"
 import { IGenerateIntroStory, IIntroStory } from "@/@types/intro"
 import { createStory } from "@/lib/data/stories"
 import { StoryChooseCardLoading } from "./loadings"
+import { PreviewPlayer, VideoPlayer } from "./video-player"
 
 
 
@@ -202,6 +203,7 @@ const StoryForm: React.FC<{
 export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [generateStories, setGenerateStories] = useState<IIntroStory[]>([])
   const [loading, setLoading] = useState(false)
+  const [videoPlayer, setVideoPlayer] = useState(false)
   const [storyIntroIndex, setStoryIntroIndex] = useState<number | null>(null)
   const [introData, setIntroData] = useState<IGenerateIntroStory | null>(null)
   
@@ -242,15 +244,21 @@ export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }
           </Button>
         ) : false}
       >
-        {generateStories.length > 0 ? (
+        {!videoPlayer && generateStories.length > 0 ? (
           <ChooseStory data={generateStories as any} onClickCard={handleChooseStory} indexActive={storyIntroIndex} />
-        ) : (
+        ) : !videoPlayer && (
           <>
             <DialogHeader>
               <DialogTitle className="mb-4 text-primary text-left">Qual é a sua ideia para a história?</DialogTitle>
             </DialogHeader>
             <StoryForm onSubmit={setGenerateStories} introData={setIntroData}/>
           </>
+        )}
+        {videoPlayer && (
+          <PreviewPlayer />
+          // <VideoPlayer
+          //   src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          // />
         )}
       </DialogContent>
     </ModalProvider>

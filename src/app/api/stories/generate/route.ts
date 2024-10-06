@@ -9,6 +9,7 @@ export interface GenerateStoryVideoJujuba {
   sinopse: string;
   moral_lesson: string;
   cover_prompt: string;
+  cover_img: string;
 }
 
 interface BodyGenerateStoryVideoJujuba {

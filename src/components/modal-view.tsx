@@ -58,7 +58,7 @@ const StoryChooseCard = ({
   React.useEffect(() => {
     const fetchImage = async () => {
       try {
-        const response = await axios.get(item.cover_prompt);
+        const response = await axios.get(item.cover_img);
         const base64 = response.data
         setImageBase64(base64);
       } catch (error) {
@@ -67,7 +67,7 @@ const StoryChooseCard = ({
     };
 
     fetchImage();
-  }, [item.cover_prompt]);
+  }, [item.cover_img]);
   
 
   return (

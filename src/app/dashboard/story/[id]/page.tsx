@@ -2,10 +2,13 @@ import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Card } from '@/components/ui/card'
+
 
 export default async function Page() {
   return (
-    <main className='text-white'>
+    <ScrollArea className='text-white w-full h-screen pb-[10%]'>
       <div className='flex w-full h-[140px] md:h-[400px] relative'>
         <div className=' flex-1 flex flex-col justify-center'>
           <div className='px-5 md:px-20 gap-3 md:gap-6 absolute flex flex-col justify-center'>
@@ -38,6 +41,23 @@ export default async function Page() {
           </p>
         </div>
       </div>
-    </main>
+      <div className='p-5 md:px-20'>
+        <h2 className='text-gray-200 font-semibold text-2xl mb-4'>Similares</h2>
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-4 md:gap-6'>
+          {[...Array(8)].map((_, index) => (
+            <Card key={index} className='relative h-[250px] w-full overflow-hidden border-none hover:opacity-85 cursor-pointer'>
+              <Link href={`/dashboard/story/${index+1}`}>
+                <Image 
+                  src={`/poster/1.jpeg`} // Substitua com os URLs corretos dos pôsteres dos filmes
+                  alt={`Pôster do Filme ${index + 1}`}
+                  fill
+                  className='object-cover hover:scale-110 transition-all'
+                />
+              </Link>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </ScrollArea>
   )
 }

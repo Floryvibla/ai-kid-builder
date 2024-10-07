@@ -43,7 +43,7 @@ export function BtnBack({title='Voltar'}:{title?:string}) {
     <Button 
       onClick={() => router.back()}
       variant={'ghost'}
-      className='flex items-center'
+      className='flex items-center px-0 py-0'
     >
       <ChevronLeft/>
       <span>{title}</span>

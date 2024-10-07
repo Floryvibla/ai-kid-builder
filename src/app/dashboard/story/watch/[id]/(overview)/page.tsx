@@ -4,12 +4,13 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { VideoPlayer } from '@/components/video-player'
 import { ChevronLeft } from 'lucide-react'
+import Image from 'next/image'
 import React from 'react'
 
 export default async function Page() {
   return (
-    <div className='text-white relative w-full h-full'>
-      <div className='px-0 md:px-20'>
+    <div className='text-white w-full h-full '>
+      <div className='px-4 md:px-20'>
         <BtnBack/>
       </div>
       <div className='w-full h-[80%] flex items-center justify-center'>
@@ -50,6 +51,15 @@ export default async function Page() {
             </div>
           </div>
         </Carousel>
+      </div>
+      <div className='absolute top-0 backdrop-blur-md bg-black/40 h-screen w-screen -z-40'/>
+      <div className='absolute -z-50 w-screen h-screen top-0'>
+        <Image 
+          src={'/wal.jpg'} 
+          alt='' 
+          fill 
+          className='object-cover mask-linear mask-dir-to-b mask-from-[1] mask-point-from-[50%]' 
+        />
       </div>
     </div>
   )

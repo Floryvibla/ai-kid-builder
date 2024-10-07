@@ -1,9 +1,7 @@
 import { BtnBack } from '@/components/button-client'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { VideoPlayer } from '@/components/video-player'
-import { ChevronLeft } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
@@ -14,8 +12,8 @@ export default async function Page() {
         <BtnBack/>
       </div>
       <div className='w-full h-[80%] flex items-center justify-center'>
-        <Carousel 
-          orientation='vertical' 
+        <Carousel
+          orientation='vertical'
           opts={{
             align: "start",
           }}

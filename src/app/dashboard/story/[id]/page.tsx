@@ -4,11 +4,15 @@ import Link from 'next/link'
 import React from 'react'
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Card } from '@/components/ui/card'
+import { BtnBack } from '@/components/button-client'
 
 
 export default async function Page() {
   return (
     <ScrollArea className='text-white w-full h-screen pb-[10%]'>
+      <div className='px-4 md:px-20'>
+        <BtnBack/>
+      </div>
       <div className='flex w-full h-[140px] md:h-[400px] relative'>
         <div className=' flex-1 flex flex-col justify-center'>
           <div className='px-5 md:px-20 gap-3 md:gap-6 absolute flex flex-col justify-center'>

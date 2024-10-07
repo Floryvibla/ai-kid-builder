@@ -17,6 +17,8 @@ import axios from "axios"
 import { ModalProvider } from "./modal-provider"
 import { DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { VideoPlayer } from "./video-player"
+import { useCarousel } from "@/hooks/useCarousel"
+import Link from "next/link"
 
 const films = [
   "https://blackoutv.com/wp-content/uploads/2023/12/7KkHiZMvEdEZq2qrQX3kzYA7Off-288x400.jpg",
@@ -71,41 +73,13 @@ export function CardStory({item, isActive}:{item:any, isActive: boolean}) {
 
 export function CarouselBox({ items, childrenNavigation, carouselItemChildren,  }: PropsCard) {
 
-  const [cardIndex, setCardIndex] = React.useState(0)
-  const [api, setApi] = React.useState<CarouselApi>()
-  const [current, setCurrent] = React.useState(0)
-  const [count, setCount] = React.useState(0)
-  const [openModalPreviewVideo, setOpenModalPreviewVideo] = React.useState<any | null>(null)
+  const {
+    cardIndex, count, setApi, setCardIndex
+  } = useCarousel()
 
   const handleOnclickCard = (index:number, item:any) => {
     setCardIndex(index)
-    setOpenModalPreviewVideo(item)
-    console.log("Testando");
   }
-
-  const handleModal = (state:boolean, item:any, index:number) => {
-    setOpenModalPreviewVideo(state ? item : false)
-    // setCardIndex(index)
-    console.log("Testando");
-  }
-
-  React.useEffect(() => {
-    if (!api) {
-      return
-    }
- 
-    setCount(api.scrollSnapList().length)
-    setCardIndex(api.selectedScrollSnap())
- 
-    api.on("select", (teste) => {
-      console.log("Yeees: ", teste.canScrollNext());
-      
-      setCardIndex(api.selectedScrollSnap())
-    })
-  }, [api])
-
-  console.log("cardIndex!!: ", cardIndex);
-  
 
   return (
     <Carousel
@@ -133,22 +107,10 @@ export function CarouselBox({ items, childrenNavigation, carouselItemChildren,  
               className="basis-[220px] lg:basis-[227px]"
             >
               <div className="p-1">
-                <CardStory item={item} isActive={index === cardIndex}/>
+                <Link href={`/dashboard/story/${item.id}`}>
+                  <CardStory item={item} isActive={index === cardIndex}/>
+                </Link>
               </div>
-              <ModalProvider 
-                openModal={openModalPreviewVideo!!} 
-                onOpenChange={state => handleModal(state, item, index)}
-              >
-                <DialogContent
-                  className="backdrop-blur-lg bg-black/40 border-gray-300/30 text-white"
-                >
-                  <DialogTitle/>
-                  <VideoPlayer
-                    src={'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'}
-                    // onProgress={(progress) => setVideoPlayerStream({...videoPlayerStream, progress})}
-                  />
-                </DialogContent>
-              </ModalProvider>
             </CarouselItem>
           )) : carouselItemChildren ?? null}
         </CarouselContent>

@@ -14,7 +14,7 @@ export default async function Page() {
           <div className='px-5 md:px-20 gap-3 md:gap-6 absolute flex flex-col justify-center'>
             <h1 className='text-xl md:text-5xl'>Rebel Ridge Ridge Ridge</h1>
             <Button asChild className='px-5 w-[120px] md:w-[220px] md:text-2xl'> 
-              <Link href={'#'}>ASSISTIR</Link>
+              <Link href={'/dashboard/story/watch/5'}>ASSISTIR</Link>
             </Button>
           </div>
         </div>

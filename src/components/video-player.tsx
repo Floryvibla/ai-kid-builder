@@ -5,12 +5,14 @@ import { Player } from "@remotion/player";
 import { Progress } from './ui/progress'
 import { Pause, Play, Volume, VolumeOff } from 'lucide-react';
 import { RemotionVideo } from './remotion/composition';
+import { cn } from '@/lib/utils';
 
 interface VideoPlayerProps {
   src: string;
   poster?: string;
   autoPlay?: boolean;
   loop?: boolean;
+  className?: string;
 }
 
 export function PreviewPlayer({message, progress}:{message: string, progress:number}) {
@@ -39,6 +41,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   poster,
   autoPlay = true,
   loop = true,
+  className
 }) => {
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [isMuted, setIsMuted] = useState(true);
@@ -77,7 +80,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   };
 
   return (
-    <div className="relative w-full max-w-[350px] aspect-[9/16] mx-auto overflow-hidden rounded-lg shadow-lg">
+    <div className={cn(
+      "relative w-full max-w-[350px] aspect-[9/16] mx-auto overflow-hidden rounded-lg shadow-lg",
+      className
+      )}>
       <video
         ref={videoRef}
         className="w-full h-full object-cover"

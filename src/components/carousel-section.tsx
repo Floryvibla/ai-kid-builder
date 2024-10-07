@@ -19,6 +19,7 @@ import { DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { VideoPlayer } from "./video-player"
 import { useCarousel } from "@/hooks/useCarousel"
 import Link from "next/link"
+import { StoryResponse } from "@/@types/story"
 
 const films = [
   "https://blackoutv.com/wp-content/uploads/2023/12/7KkHiZMvEdEZq2qrQX3kzYA7Off-288x400.jpg",
@@ -32,7 +33,7 @@ const films = [
 ]
 
 interface PropsCard {
-  items: any[]
+  items: StoryResponse[]
   childrenNavigation?: React.ReactNode
   carouselItemChildren?: React.ReactNode
   children?: React.ReactNode
@@ -73,6 +74,9 @@ export function CardStory({item, isActive}:{item:any, isActive: boolean}) {
 
 export function CarouselBox({ items, childrenNavigation, carouselItemChildren,  }: PropsCard) {
 
+  console.log("items: ", items);
+  
+
   const {
     cardIndex, count, setApi, setCardIndex
   } = useCarousel()
@@ -107,7 +111,7 @@ export function CarouselBox({ items, childrenNavigation, carouselItemChildren,  
               className="basis-[220px] lg:basis-[227px]"
             >
               <div className="p-1">
-                <Link href={`/dashboard/story/${item.id}`}>
+                <Link href={`/dashboard/story/${item.intro.id}`}>
                   <CardStory item={item} isActive={index === cardIndex}/>
                 </Link>
               </div>

@@ -54,7 +54,7 @@ export function HeroStory() {
           </TabsContent>
           <TabsContent value="explorer">
             <CarouselBox 
-              items={films2}
+              items={[]}
               childrenNavigation={(
                 <TabsList className='border backdrop-blur-md bg-black/40'>
                   <TabsTrigger value="my_stories">Minhas histórias</TabsTrigger>

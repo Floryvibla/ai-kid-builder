@@ -1,4 +1,4 @@
-import { IGenerateIntroStory, IIntroStory } from "./intro";
+import { IGenerateIntroStory, IIntroStory, IntroResponse } from "./intro";
 import { ISceneStory } from "./scene";
 
 export interface ICreateStory {
@@ -14,4 +14,9 @@ export type IStoryState = 'starting' | 'scenes' | 'images' | 'audios' | 'videos'
 export interface ICreateStoryJujuba {
   user_prompt: IGenerateIntroStory,
   story?: IIntroStory
+}
+
+export interface StoryResponse {
+  id: number
+  intro: IntroResponse
 }

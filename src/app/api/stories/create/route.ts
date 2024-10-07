@@ -1,5 +1,5 @@
+import { IGenerateIntroStory } from "@/@types/intro";
 import { ISceneStory } from "@/@types/scene";
-import { StoryData } from "@/components/modal-view";
 import { API } from "@/config/api";
 import { getUserLanguage, isAuthorized, serverSession } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
@@ -17,7 +17,7 @@ export interface GenerateStoryVideoJujuba {
 
 interface BodyGenerateStoryVideoJujuba {
   storyChoose:GenerateStoryVideoJujuba
-  introData: StoryData
+  introData: IGenerateIntroStory
 }
 
 export async function POST(req: NextRequest) {

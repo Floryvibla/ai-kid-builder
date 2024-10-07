@@ -4,6 +4,7 @@ import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { Button } from './ui/button'
+import { ChevronLeft } from 'lucide-react'
 
 interface Props {
   children?: React.ReactNode
@@ -31,6 +32,21 @@ export default function ButtonAuthCTA({children= 'Criar história', asChild}:Pro
       asChild={asChild}
     >
       {children}
+    </Button>
+  )
+}
+
+
+export function BtnBack({title='Voltar'}:{title?:string}) {
+  const router = useRouter()
+  return (
+    <Button 
+      onClick={() => router.back()}
+      variant={'ghost'}
+      className='flex items-center'
+    >
+      <ChevronLeft/>
+      <span>{title}</span>
     </Button>
   )
 }

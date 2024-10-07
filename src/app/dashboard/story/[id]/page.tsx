@@ -24,6 +24,20 @@ export default async function Page() {
           />
         </div>
       </div>
+      <div className='p-5 text-gray-400 md:px-20 md:flex md:items-center md:gap-10'>
+       <div>
+        <h2 className='text-gray-200 font-semibold text-xl'>Sinopse</h2>
+        <p className=''>
+          Após um líder misterioso impor sua própria lei em um sistema brutal de celas verticais, uma mulher luta contra um método bizarro de distribuição de comida.
+        </p>
+       </div>
+        <div className='mt-8 md:mt-0'>
+          <h2 className='text-gray-200 font-semibold text-xl'>Moral da História</h2>
+          <p className='text-gray-400'>
+            Após um líder misterioso impor sua própria lei em um sistema brutal de celas verticais, uma mulher luta contra um método bizarro de distribuição de comida.
+          </p>
+        </div>
+      </div>
     </main>
   )
 }

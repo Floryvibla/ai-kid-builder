@@ -45,10 +45,10 @@ export default async function Page() {
         <h2 className='text-gray-200 font-semibold text-2xl mb-4'>Similares</h2>
         <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-4 md:gap-6'>
           {[...Array(8)].map((_, index) => (
-            <Card key={index} className='relative h-[250px] w-full overflow-hidden border-none hover:opacity-85 cursor-pointer'>
+            <Card key={index} className='relative h-[300px] w-full overflow-hidden border-none hover:opacity-85 cursor-pointer'>
               <Link href={`/dashboard/story/${index+1}`}>
                 <Image 
-                  src={`/poster/1.jpeg`} // Substitua com os URLs corretos dos pôsteres dos filmes
+                  src={`/poster/${index%2}.jpeg`} // Substitua com os URLs corretos dos pôsteres dos filmes
                   alt={`Pôster do Filme ${index + 1}`}
                   fill
                   className='object-cover hover:scale-110 transition-all'

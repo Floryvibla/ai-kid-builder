@@ -13,6 +13,10 @@ import {
 } from "@/components/ui/carousel"
 import Image from "next/image"
 import clsx from "clsx"
+import axios from "axios"
+import { ModalProvider } from "./modal-provider"
+import { DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog"
+import { VideoPlayer } from "./video-player"
 
 const films = [
   "https://blackoutv.com/wp-content/uploads/2023/12/7KkHiZMvEdEZq2qrQX3kzYA7Off-288x400.jpg",
@@ -33,12 +37,29 @@ interface PropsCard {
 }
 
 export function CardStory({item, isActive}:{item:any, isActive: boolean}) {
+
+  const [imageBase64, setImageBase64] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const response = await axios.get(item.intro.cover_img);
+        const base64 = response.data
+        setImageBase64(base64);
+      } catch (error) {
+        console.error('Erro ao buscar a imagem:', error);
+      }
+    };
+
+    fetchImage();
+  }, [item.intro.cover_img]);
+
   return (
     <Card className={clsx("h-[300px] md:h-[315px] relative cursor-pointer hover:opacity-90", {
       'border-primary border-4': isActive
     })}>
       <Image 
-        src={item}
+        src={`data:image/jpeg;base64,${imageBase64}`}
         alt=""
         fill
         objectFit="cover"
@@ -54,9 +75,18 @@ export function CarouselBox({ items, childrenNavigation, carouselItemChildren,  
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
   const [count, setCount] = React.useState(0)
+  const [openModalPreviewVideo, setOpenModalPreviewVideo] = React.useState<any | null>(null)
 
-  const handleOnclickCard = (index:number) => {
+  const handleOnclickCard = (index:number, item:any) => {
     setCardIndex(index)
+    setOpenModalPreviewVideo(item)
+    console.log("Testando");
+  }
+
+  const handleModal = (state:boolean, item:any, index:number) => {
+    setOpenModalPreviewVideo(state ? item : false)
+    // setCardIndex(index)
+    console.log("Testando");
   }
 
   React.useEffect(() => {
@@ -73,6 +103,9 @@ export function CarouselBox({ items, childrenNavigation, carouselItemChildren,  
       setCardIndex(api.selectedScrollSnap())
     })
   }, [api])
+
+  console.log("cardIndex!!: ", cardIndex);
+  
 
   return (
     <Carousel
@@ -96,12 +129,26 @@ export function CarouselBox({ items, childrenNavigation, carouselItemChildren,  
           {items.length > 0 ? items.map((item, index) => (
             <CarouselItem 
               key={index} 
-              onClick={() => handleOnclickCard(index)}
+              onClick={() => handleOnclickCard(index, item)}
               className="basis-[220px] lg:basis-[227px]"
             >
               <div className="p-1">
                 <CardStory item={item} isActive={index === cardIndex}/>
               </div>
+              <ModalProvider 
+                openModal={openModalPreviewVideo!!} 
+                onOpenChange={state => handleModal(state, item, index)}
+              >
+                <DialogContent
+                  className="backdrop-blur-lg bg-black/40 border-gray-300/30 text-white"
+                >
+                  <DialogTitle/>
+                  <VideoPlayer
+                    src={'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'}
+                    // onProgress={(progress) => setVideoPlayerStream({...videoPlayerStream, progress})}
+                  />
+                </DialogContent>
+              </ModalProvider>
             </CarouselItem>
           )) : carouselItemChildren ?? null}
         </CarouselContent>

@@ -8,19 +8,13 @@ import React from "react";
 interface Props {
   children?: React.ReactNode
   openModal?: boolean
+  onOpenChange?: (isOpen: boolean) => void
 }
 
-export function ModalProvider({ children, openModal=false }:Props) {
-
-  const [open, setOpen] = React.useState(openModal);
-
-  React.useEffect(() => {
-    setOpen(openModal);
-  }, [openModal])
-  
+export function ModalProvider({ children, openModal=false, onOpenChange }:Props) {
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={openModal} onOpenChange={onOpenChange}>
       {children}
     </Dialog>
   )

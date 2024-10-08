@@ -203,6 +203,7 @@ const StoryForm: React.FC<{
 export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [generateStories, setGenerateStories] = useState<IIntroStory[]>([])
   const [loading, setLoading] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
   const [videoPlayerStream, setVideoPlayerStream] = useState<{message:string, status: string, progress:number} | null>(null)
   const [storyIntroIndex, setStoryIntroIndex] = useState<number | null>(null)
   const [introData, setIntroData] = useState<IGenerateIntroStory | null>(null)
@@ -244,7 +245,7 @@ export const ModalView: React.FC<{ children?: React.ReactNode }> = ({ children }
   
 
   return (
-    <ModalProvider>
+    <ModalProvider onOpenChange={setOpenModal} openModal={openModal}>
       <DialogTrigger asChild>
         {children ?? 'Abrir'}
       </DialogTrigger>

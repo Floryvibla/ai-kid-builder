@@ -6,6 +6,16 @@ export interface IIntroStory {
   story?: number
 }
 
+export interface ITopStoryProps {
+  slug: string,
+  id: number,
+  cover_img: string,
+  title: string,
+  story: {
+    id: number,
+  }
+}
+
 export interface IGenerateIntroStory {
   age: string;
   message: string;
@@ -15,6 +25,7 @@ export interface IGenerateIntroStory {
 
 export interface IntroResponse {
   id: number;
+  slug: string;
   title: string;
   sinopse: string;
   moral_lesson: string;

@@ -61,3 +61,12 @@ export class StreamingResponse extends Response {
     });
   }
 }
+
+
+export const sleep = (time?:number) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(`Promessa resolvida após ${time ?? 2000} segundos!`);
+    }, time??2000); // 2000 milissegundos = 2 segundos
+  });
+};

@@ -2,7 +2,6 @@
 
 
 import { CarouselBox } from '@/components/carousel-section'
-import { ModalView } from '@/components/modal-view'
 import Image from 'next/image'
 import React, { Suspense } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"

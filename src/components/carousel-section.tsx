@@ -20,6 +20,7 @@ import { VideoPlayer } from "./video-player"
 import { useCarousel } from "@/hooks/useCarousel"
 import Link from "next/link"
 import { StoryResponse } from "@/@types/story"
+import { StoryCardEmpty } from "./story-card-empty"
 
 const films = [
   "https://blackoutv.com/wp-content/uploads/2023/12/7KkHiZMvEdEZq2qrQX3kzYA7Off-288x400.jpg",
@@ -73,10 +74,7 @@ export function CardStory({item, isActive}:{item:any, isActive: boolean}) {
 }
 
 export function CarouselBox({ items, childrenNavigation, carouselItemChildren,  }: PropsCard) {
-
-  console.log("items: ", items);
   
-
   const {
     cardIndex, count, setApi, setCardIndex
   } = useCarousel()
@@ -104,19 +102,20 @@ export function CarouselBox({ items, childrenNavigation, carouselItemChildren,  
       </div>
       <div className={clsx("w-full", {'mask-linear mask-dir-to-r  mask-point-from-[80%]': (count-1) !== cardIndex})}>
         <CarouselContent className="">
-          {items.length > 0 ? items.map((item, index) => (
+          <StoryCardEmpty/>
+          {items.map((item, index) => (
             <CarouselItem 
               key={index} 
               onClick={() => handleOnclickCard(index, item)}
               className="basis-[220px] lg:basis-[227px]"
             >
               <div className="p-1">
-                <Link href={`/dashboard/story/${item.intro.id}`}>
+                <Link href={`/dashboard/story/${item.intro.slug}`}>
                   <CardStory item={item} isActive={index === cardIndex}/>
                 </Link>
               </div>
             </CarouselItem>
-          )) : carouselItemChildren ?? null}
+          ))}
         </CarouselContent>
       </div>
     </Carousel>

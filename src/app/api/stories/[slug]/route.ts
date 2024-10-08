@@ -19,13 +19,18 @@ export async function GET(req: NextRequest, { params: { slug } }: Params) {
 
     // Get user session
     const session = await serverSession();
+
+    console.log("session: ", session);
+    
     
     if (!session?.jwt) {
+      console.log("session2: ", session);
+      
       return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
     }
 
     // Assume user ID is available in session.user.id
-    const userId = session.user.id;
+    const userId = session?.user.id;
 
     const { searchParams } = new URL(req.url);
     const paramsObject = Object.fromEntries(searchParams.entries());
@@ -34,7 +39,8 @@ export async function GET(req: NextRequest, { params: { slug } }: Params) {
       params: {
         locale: userLanguage,
         'filters[slug][$eq]': slug,
-        'populate[0]': 'story'
+        'populate[0]': 'story',
+        ...paramsObject
       }
     });
 
